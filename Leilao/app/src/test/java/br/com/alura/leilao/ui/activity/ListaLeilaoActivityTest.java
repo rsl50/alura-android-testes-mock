@@ -24,15 +24,14 @@ import br.com.alura.leilao.ui.recyclerview.adapter.ListaLeilaoAdapter;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ListaLeilaoActivityTest {
 
     @Mock
-    private Context context;
-
-    @Spy
-    private ListaLeilaoAdapter adapter = new ListaLeilaoAdapter((context));
+    private ListaLeilaoAdapter adapter;
 
     @Mock
     private LeilaoWebClient client;
@@ -41,11 +40,8 @@ public class ListaLeilaoActivityTest {
     public void deve_AtualizarListaDeLeiloes_QuandoBuscarLeiloesDaApi() {
         ListaLeilaoActivity activity = new ListaLeilaoActivity();
 
-        // ignora comportamento atualizaLista do adapter
-        Mockito.doNothing().when(adapter).atualizaLista();
-
         // Mock do comportamento de resposta do client de acesso da API
-        Mockito.doAnswer(new Answer() {
+        doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 RespostaListener<List<Leilao>> argument = invocation.getArgument(0);
@@ -58,8 +54,11 @@ public class ListaLeilaoActivityTest {
         }).when(client).todos(ArgumentMatchers.any(RespostaListener.class));
 
         activity.buscaLeiloes(adapter, client);
-        int quantidadeLeiloesDevolvida = adapter.getItemCount();
 
-        assertThat(quantidadeLeiloesDevolvida, is(2));
+        verify(client).todos(ArgumentMatchers.any(RespostaListener.class));
+        verify(adapter).atualiza(new ArrayList<>(Arrays.asList(
+                new Leilao("Computador"),
+                new Leilao("Carro")
+        )));
     }
 }
