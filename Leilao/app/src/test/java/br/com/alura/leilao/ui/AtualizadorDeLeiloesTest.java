@@ -1,14 +1,11 @@
-package br.com.alura.leilao.ui.activity;
+package br.com.alura.leilao.ui;
 
 import android.content.Context;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Answers;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.Spy;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
@@ -22,13 +19,14 @@ import br.com.alura.leilao.api.retrofit.client.RespostaListener;
 import br.com.alura.leilao.model.Leilao;
 import br.com.alura.leilao.ui.recyclerview.adapter.ListaLeilaoAdapter;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ListaLeilaoActivityTest {
+public class AtualizadorDeLeiloesTest {
+
+    @Mock
+    private Context context;
 
     @Mock
     private ListaLeilaoAdapter adapter;
@@ -38,7 +36,7 @@ public class ListaLeilaoActivityTest {
 
     @Test
     public void deve_AtualizarListaDeLeiloes_QuandoBuscarLeiloesDaApi() {
-        ListaLeilaoActivity activity = new ListaLeilaoActivity();
+        AtualizadorDeLeiloes atualizador = new AtualizadorDeLeiloes();
 
         // Mock do comportamento de resposta do client de acesso da API
         doAnswer(new Answer() {
@@ -53,7 +51,7 @@ public class ListaLeilaoActivityTest {
             }
         }).when(client).todos(ArgumentMatchers.any(RespostaListener.class));
 
-        activity.buscaLeiloes(adapter, client);
+        atualizador.buscaLeiloes(adapter, client, context);
 
         verify(client).todos(ArgumentMatchers.any(RespostaListener.class));
         verify(adapter).atualiza(new ArrayList<>(Arrays.asList(
@@ -61,4 +59,5 @@ public class ListaLeilaoActivityTest {
                 new Leilao("Carro")
         )));
     }
+
 }
