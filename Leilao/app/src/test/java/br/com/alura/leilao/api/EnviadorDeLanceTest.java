@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import br.com.alura.leilao.api.retrofit.client.LeilaoWebClient;
+import br.com.alura.leilao.api.retrofit.client.RespostaListener;
 import br.com.alura.leilao.exception.LanceMenorQueUltimoLanceException;
 import br.com.alura.leilao.exception.UsuarioJaDeuCincoLancesException;
 import br.com.alura.leilao.model.Lance;
@@ -15,7 +16,10 @@ import br.com.alura.leilao.model.Leilao;
 import br.com.alura.leilao.model.Usuario;
 import br.com.alura.leilao.ui.dialog.AvisoDialogManager;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -42,6 +46,7 @@ public class EnviadorDeLanceTest {
         enviador.envia(leilao, new Lance(new Usuario("Fran"), 100));
 
         verify(manager).mostraAvisoLanceMenorQueUltimoLance();
+        verify(client, never()).propoe(any(Lance.class), anyLong(), any(RespostaListener.class));
     }
 
     @Test
@@ -54,5 +59,6 @@ public class EnviadorDeLanceTest {
         enviador.envia(leilao, new Lance(new Usuario("Robson"), 200));
 
         verify(manager).mostraAvisoUsuarioJaDeuCincoLances();
+        verify(client, never()).propoe(any(Lance.class), anyLong(), any(RespostaListener.class));
     }
 }
